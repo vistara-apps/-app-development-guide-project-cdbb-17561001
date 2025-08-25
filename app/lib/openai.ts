@@ -1,4 +1,3 @@
-
 import OpenAI from 'openai';
 
 const openai = new OpenAI({
@@ -12,6 +11,14 @@ export interface ExtractedTransaction {
   description: string;
   amount: number;
   merchant?: string;
+}
+
+export interface FinancialInsight {
+  type: 'recommendation' | 'warning' | 'info';
+  title: string;
+  description: string;
+  amount?: number;
+  category?: string;
 }
 
 export async function extractTransactionsFromText(text: string): Promise<ExtractedTransaction[]> {
