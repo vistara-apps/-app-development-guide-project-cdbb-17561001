@@ -10,7 +10,7 @@
     "subtitle": "Built with Zara",
     "description": "StatementSage is a Base Mini App built with Zara.",
     "iconUrl": "https://0co.to/images/zara-2.png",
-    "homeUrl": "https://cdbb00f8ef99436a89796ecd8358e31d-mhbe-c2clzaj6t-vistara.vercel.app",
+    "homeUrl": "https://cdbb00f8ef99436a89796ecd8358e31d-oa9i-43zo3jz2i-vistara.vercel.app",
     "splashImageUrl": "https://cdbb00f8ef99436a89796ecd8358e31d-mhbe-c2clzaj6t-vistara.vercel.app/splash.png",
     "splashBackgroundColor": "#000000",
     "heroImageUrl": "https://cdbb00f8ef99436a89796ecd8358e31d-mhbe-c2clzaj6t-vistara.vercel.app/image.png",
@@ -25,6 +25,6 @@
       "miniapp",
       "onchainkit"
     ],
-    "webhookUrl": "https://cdbb00f8ef99436a89796ecd8358e31d-mhbe-c2clzaj6t-vistara.vercel.app/api/webhook"
+    "webhookUrl": "https://cdbb00f8ef99436a89796ecd8358e31d-oa9i-43zo3jz2i-vistara.vercel.app/api/webhook"
   }
 }
