@@ -1,14 +1,9 @@
-
 "use client";
-
-import { motion } from 'framer-motion';
 
 export function LoadingSpinner() {
   return (
-    <motion.div
-      animate={{ rotate: 360 }}
-      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-      className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full"
-    />
+    <div className="flex items-center justify-center p-8">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+    </div>
   );
 }

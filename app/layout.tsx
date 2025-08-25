@@ -1,7 +1,7 @@
-
 import "./globals.css";
 import "@coinbase/onchainkit/styles.css";
 import type { Metadata, Viewport } from "next";
+import { type ReactNode } from "react";
 import { Providers } from "./providers";
 
 export const viewport: Viewport = {
@@ -15,15 +15,15 @@ export const metadata: Metadata = {
   other: {
     "fc:frame": JSON.stringify({
       version: "next",
-      imageUrl: "/og-image.png",
+      imageUrl: "/api/og",
       button: {
         title: "Launch StatementSage",
         action: {
           type: "launch_frame",
           name: "StatementSage",
           url: process.env.NEXT_PUBLIC_URL || "http://localhost:3000",
-          splashImageUrl: "/splash-image.png",
-          splashBackgroundColor: "#f8f9fa",
+          splashImageUrl: "/splash.png",
+          splashBackgroundColor: "#f8fafc",
         },
       },
     }),
@@ -37,7 +37,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>
+      <body className="bg-bg text-text">
         <Providers>{children}</Providers>
       </body>
     </html>
