@@ -1,75 +1,52 @@
+# StatementSage with x402 Payment Integration
 
-# StatementSage
-
-Transform bank statements into smart financial insights, effortlessly.
+This project implements a financial statement analysis application with x402 payment integration for USDC payments on Base.
 
 ## Features
 
-- **Automated Statement Conversion**: Upload bank statements (PDF, image) and get structured transaction data
-- **Intelligent Data Tagging**: AI-powered transaction categorization
-- **Spending Pattern Visualization**: Beautiful charts and graphs of your financial data  
-- **Personalized Financial Recommendations**: Actionable insights based on your spending habits
-- **Base MiniApp**: Integrated with Base Wallet for seamless user experience
+- Upload and analyze bank statements
+- View financial insights and transaction history
+- Subscription management with x402 payment flow
+- USDC payments on Base network
 
-## Tech Stack
+## Payment Flow Implementation
 
-- **Framework**: Next.js 15 with TypeScript
-- **Styling**: Tailwind CSS with custom design system
-- **AI**: OpenAI for transaction extraction and insights
-- **Charts**: Recharts for data visualization
-- **Animations**: Framer Motion
-- **MiniKit**: Base MiniApp integration
+The application uses the x402 payment flow for handling USDC payments on Base. The implementation includes:
 
-## Getting Started
+1. **x402 Client Integration**: Using `x402-axios` and `wagmi`'s `useWalletClient` to interact with the Base blockchain.
 
-1. **Install dependencies**:
-   ```bash
-   npm install
-   ```
+2. **Payment Processing**: The payment flow is implemented in the following components:
+   - `app/lib/x402.ts`: Core payment processing functions
+   - `app/hooks/usePayment.ts`: Custom React hook for payment state management
+   - `app/components/PaymentProcessor.tsx`: UI component for the payment flow
+   - `app/api/payment/route.ts`: API endpoint for payment verification
 
-2. **Set up environment variables**:
-   ```bash
-   cp .env.example .env.local
-   ```
-   Fill in your API keys (OpenAI, OnchainKit)
+3. **Transaction Verification**: The application verifies transaction confirmations and updates the user's subscription status accordingly.
 
-3. **Run the development server**:
-   ```bash
-   npm run dev
-   ```
+## Testing the Payment Flow
 
-4. **Open**: http://localhost:3000
+To test the payment flow:
 
-## Usage
+1. Connect your wallet using the wallet button in the top right
+2. Navigate to the "Pro" tab
+3. Click "Pay with USDC on Base"
+4. Confirm the transaction in your wallet
+5. The application will verify the transaction and update your subscription status
 
-1. **Upload**: Click to upload a bank statement (PDF or image)
-2. **Process**: AI extracts and categorizes transactions
-3. **Analyze**: View spending breakdown with interactive charts
-4. **Insights**: Get personalized financial recommendations
+## Development
 
-## Key Components
+This is a Next.js application with the following tech stack:
+- Next.js 15
+- React 18
+- Wagmi 2
+- x402-axios for payments
+- TailwindCSS for styling
 
-- `FileUploadButton`: Drag & drop file upload with validation
-- `TransactionListItem`: Display individual transactions with categories
-- `ChartDisplay`: Pie and bar charts for spending visualization
-- `InsightCard`: Personalized financial recommendations
-- `MiniAppFrame`: Base MiniApp wrapper with wallet integration
+To run the development server:
 
-## API Integration
+```bash
+npm run dev
+```
 
-- **OpenAI**: Transaction extraction and categorization
-- **Base MiniKit**: Wallet connection and frame management
-- **Recharts**: Data visualization
+Open [http://localhost:3000](http://localhost:3000) to view the application.
 
-## Features Roadmap
-
-- [ ] OCR for PDF/image text extraction
-- [ ] Advanced spending pattern analysis
-- [ ] Budget tracking and alerts
-- [ ] Multi-bank account support
-- [ ] Export reports functionality
-- [ ] Subscription management with Stripe
-
-## License
-
-MIT License

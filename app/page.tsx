@@ -1,4 +1,3 @@
-
 "use client";
 
 import {
@@ -123,7 +122,8 @@ export default function App() {
   }, []);
 
   const handleSubscriptionUpgrade = useCallback(() => {
-    // Simulate payment flow
+    // This is now handled by the PaymentProcessor component
+    // which uses the x402 payment flow
     setIsProUser(true);
   }, []);
 
