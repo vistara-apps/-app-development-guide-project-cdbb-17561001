@@ -1,0 +1,14 @@
+{
+  "name": "StatementSage",
+  "description": "StatementSage is a Base Mini App built with Zara.",
+  "image": "https://dummyimage.com/1200x628/0a0b0d/ffffff.png&text=OG",
+  "external_url": "https://cdbb00f8-ef99-436a-8979-6ecd8358e31d.vistara.dev",
+  "properties": {
+    "app": {
+      "name": "StatementSage",
+      "description": "StatementSage is a Base Mini App built with Zara.",
+      "url": "https://cdbb00f8-ef99-436a-8979-6ecd8358e31d.vistara.dev",
+      "icon": "https://0co.to/images/zara-2.png"
+    }
+  }
+}
