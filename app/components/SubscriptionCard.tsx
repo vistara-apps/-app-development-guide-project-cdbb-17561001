@@ -1,5 +1,7 @@
-
 "use client";
+
+import { useState } from 'react';
+import { PaymentProcessor } from './PaymentProcessor';
 
 interface SubscriptionCardProps {
   isProUser: boolean;
@@ -7,6 +9,8 @@ interface SubscriptionCardProps {
 }
 
 export function SubscriptionCard({ isProUser, onUpgrade }: SubscriptionCardProps) {
+  const [showPaymentFlow, setShowPaymentFlow] = useState(false);
+  
   const features = [
     { name: "Unlimited statement uploads", free: false, pro: true },
     { name: "Basic spending analysis", free: true, pro: true },
@@ -15,6 +19,19 @@ export function SubscriptionCard({ isProUser, onUpgrade }: SubscriptionCardProps
     { name: "Export financial reports", free: false, pro: true },
     { name: "Email notifications", free: false, pro: true },
   ];
+
+  const handleStartPayment = () => {
+    setShowPaymentFlow(true);
+  };
+
+  const handlePaymentSuccess = () => {
+    onUpgrade();
+    setShowPaymentFlow(false);
+  };
+
+  const handlePaymentCancel = () => {
+    setShowPaymentFlow(false);
+  };
 
   if (isProUser) {
     return (
@@ -43,6 +60,18 @@ export function SubscriptionCard({ isProUser, onUpgrade }: SubscriptionCardProps
             </div>
           ))}
         </div>
+      </div>
+    );
+  }
+
+  if (showPaymentFlow) {
+    return (
+      <div className="card border-2 border-accent">
+        <PaymentProcessor 
+          amount={5} 
+          onSuccess={handlePaymentSuccess} 
+          onCancel={handlePaymentCancel} 
+        />
       </div>
     );
   }
@@ -78,7 +107,7 @@ export function SubscriptionCard({ isProUser, onUpgrade }: SubscriptionCardProps
         <div className="flex items-center justify-between mb-4">
           <h2 className="heading text-accent">Pro Plan</h2>
           <div className="text-right">
-            <p className="display text-accent">$5</p>
+            <p className="display text-accent">5 USDC</p>
             <p className="text-sm text-gray-600">per month</p>
           </div>
         </div>
@@ -97,10 +126,10 @@ export function SubscriptionCard({ isProUser, onUpgrade }: SubscriptionCardProps
         </div>
 
         <button
-          onClick={onUpgrade}
+          onClick={handleStartPayment}
           className="btn-accent w-full"
         >
-          Upgrade to Pro
+          Pay with USDC on Base
         </button>
         
         <p className="text-xs text-gray-500 text-center mt-3">
