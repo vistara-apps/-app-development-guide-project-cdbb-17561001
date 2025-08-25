@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -9,13 +10,11 @@
     --bg: 0 0% 98%;
     --surface: 0 0% 100%;
     --text: 0 0% 20%;
-    --muted: 0 0% 60%;
-    --border: 0 0% 90%;
   }
   
   body {
     @apply bg-bg text-text;
-    font-family: system-ui, -apple-system, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
   }
 }
 
@@ -24,32 +23,28 @@
     @apply bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-md transition-colors duration-200;
   }
   
-  .btn-secondary {
-    @apply bg-surface border border-border hover:bg-border/20 text-text px-4 py-2 rounded-md transition-colors duration-200;
+  .btn-accent {
+    @apply bg-accent hover:bg-accent/90 text-white px-4 py-2 rounded-md transition-colors duration-200;
   }
   
   .card {
-    @apply bg-surface border border-border rounded-lg p-6 shadow-sm;
+    @apply bg-surface border border-gray-200 rounded-lg p-6 shadow-card;
   }
   
   .input-field {
-    @apply bg-surface border border-border rounded-md px-3 py-2 text-text placeholder:text-muted focus:border-primary focus:outline-none transition-colors duration-200;
+    @apply bg-surface border border-gray-300 rounded-md px-3 py-2 text-text focus:border-primary focus:outline-none;
   }
   
-  .text-display {
+  .display {
     @apply text-xl md:text-2xl font-bold;
   }
   
-  .text-heading {
+  .heading {
     @apply text-lg md:text-xl font-semibold;
   }
   
-  .text-body {
+  .body {
     @apply text-base font-normal leading-6;
-  }
-  
-  .text-muted-custom {
-    @apply text-sm text-muted;
   }
 }
 
@@ -61,12 +56,4 @@
 @keyframes slideUp {
   from { transform: translateY(10px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
-}
-
-.animate-fade-in {
-  animation: fadeIn 200ms ease-in-out;
-}
-
-.animate-slide-up {
-  animation: slideUp 200ms ease-in-out;
 }

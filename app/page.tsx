@@ -1,234 +1,307 @@
 
 "use client";
 
-import { useState, useCallback } from 'react';
-import { usePrimaryButton } from '@coinbase/onchainkit/minikit';
-import { MiniAppFrame } from './components/MiniAppFrame';
-import { FileUploadButton } from './components/FileUploadButton';
-import { TransactionListItem } from './components/TransactionListItem';
-import { ChartDisplay } from './components/ChartDisplay';
-import { InsightCard } from './components/InsightCard';
-import { LoadingSpinner } from './components/LoadingSpinner';
-import { mockTransactions, mockInsights, mockSpendingCategories } from './lib/mockData';
-import { Transaction, FinancialInsight, SpendingCategory } from './types';
-import { extractTransactionsFromText, categorizeTransaction } from './lib/openai';
-import { motion, AnimatePresence } from 'framer-motion';
-import { BarChart3, PieChart, TrendingUp, Upload, FileText, CreditCard } from 'lucide-react';
+import {
+  useMiniKit,
+  useAddFrame,
+  useOpenUrl,
+  usePrimaryButton,
+} from "@coinbase/onchainkit/minikit";
+import {
+  Name,
+  Identity,
+  Address,
+  Avatar,
+} from "@coinbase/onchainkit/identity";
+import {
+  ConnectWallet,
+  Wallet,
+  WalletDropdown,
+  WalletDropdownDisconnect,
+} from "@coinbase/onchainkit/wallet";
+import { useEffect, useState, useCallback } from "react";
+import { FileUploadButton } from "./components/FileUploadButton";
+import { TransactionList } from "./components/TransactionList";
+import { ChartDisplay } from "./components/ChartDisplay";
+import { InsightCard } from "./components/InsightCard";
+import { SubscriptionCard } from "./components/SubscriptionCard";
 
-type ViewState = 'upload' | 'processing' | 'insights';
+type Transaction = {
+  transactionId: string;
+  date: string;
+  description: string;
+  amount: number;
+  category: string;
+  merchant: string;
+};
+
+type TabType = "upload" | "insights" | "subscription";
 
 export default function App() {
-  const [currentView, setCurrentView] = useState<ViewState>('upload');
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [insights, setInsights] = useState<FinancialInsight[]>([]);
-  const [spendingData, setSpendingData] = useState<SpendingCategory[]>([]);
+  const { setFrameReady, isFrameReady, context } = useMiniKit();
+  const [frameAdded, setFrameAdded] = useState(false);
+  const [activeTab, setActiveTab] = useState<TabType>("upload");
   const [isProcessing, setIsProcessing] = useState(false);
-  const [chartType, setChartType] = useState<'pieChart' | 'barChart'>('pieChart');
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [isProUser, setIsProUser] = useState(false);
+
+  const addFrame = useAddFrame();
+  const openUrl = useOpenUrl();
+
+  useEffect(() => {
+    if (!isFrameReady) {
+      setFrameReady();
+    }
+  }, [setFrameReady, isFrameReady]);
+
+  const handleAddFrame = useCallback(async () => {
+    const frameAdded = await addFrame();
+    setFrameAdded(Boolean(frameAdded));
+  }, [addFrame]);
 
   // Primary button configuration
   usePrimaryButton(
-    { 
-      text: currentView === 'upload' ? 'Upload Statement' : 
-            currentView === 'processing' ? 'Processing...' : 'Upload New Statement'
+    {
+      text: activeTab === "upload" ? "Upload Statement" : 
+            activeTab === "insights" ? "View Insights" : "Upgrade to Pro"
     },
     () => {
-      if (currentView === 'insights') {
-        setCurrentView('upload');
-        setTransactions([]);
-        setInsights([]);
-        setSpendingData([]);
+      if (activeTab === "upload") {
+        document.getElementById("file-upload")?.click();
+      } else if (activeTab === "insights") {
+        setActiveTab("insights");
+      } else {
+        handleSubscriptionUpgrade();
       }
     }
   );
 
   const handleFileUpload = useCallback(async (file: File) => {
     setIsProcessing(true);
-    setCurrentView('processing');
-
-    try {
-      // Simulate file processing for demo
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // For demo purposes, use mock data
-      // In production, you would:
-      // 1. Extract text from PDF/image using OCR
-      // 2. Use OpenAI to extract and categorize transactions
-      // 3. Generate insights and spending analysis
+    
+    // Simulate AI processing
+    setTimeout(() => {
+      const mockTransactions: Transaction[] = [
+        {
+          transactionId: "1",
+          date: "2024-01-15",
+          description: "Grocery Store Purchase",
+          amount: -85.32,
+          category: "Groceries",
+          merchant: "Whole Foods"
+        },
+        {
+          transactionId: "2",
+          date: "2024-01-14",
+          description: "Gas Station",
+          amount: -45.00,
+          category: "Transportation",
+          merchant: "Shell"
+        },
+        {
+          transactionId: "3",
+          date: "2024-01-13",
+          description: "Salary Deposit",
+          amount: 2500.00,
+          category: "Income",
+          merchant: "Employer Inc"
+        },
+        {
+          transactionId: "4",
+          date: "2024-01-12",
+          description: "Coffee Shop",
+          amount: -12.50,
+          category: "Dining",
+          merchant: "Starbucks"
+        }
+      ];
       
       setTransactions(mockTransactions);
-      setInsights(mockInsights);
-      setSpendingData(mockSpendingCategories);
-      setCurrentView('insights');
-    } catch (error) {
-      console.error('Error processing file:', error);
-      setCurrentView('upload');
-    } finally {
       setIsProcessing(false);
-    }
+      setActiveTab("insights");
+    }, 3000);
   }, []);
 
-  const renderUploadView = () => (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      className="space-y-lg"
+  const handleSubscriptionUpgrade = useCallback(() => {
+    // Simulate payment flow
+    setIsProUser(true);
+  }, []);
+
+  const saveFrameButton = frameAdded ? (
+    <div className="flex items-center space-x-1 text-sm font-medium text-primary animate-fade-in">
+      <span>✓</span>
+      <span>Saved</span>
+    </div>
+  ) : context && !context.client.added ? (
+    <button
+      onClick={handleAddFrame}
+      className="text-primary text-sm font-medium hover:text-primary/80 transition-colors"
     >
-      <div className="text-center space-y-sm">
-        <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
-          <FileText className="h-8 w-8 text-primary" />
-        </div>
-        <h2 className="text-display">Transform Your Statements</h2>
-        <p className="text-muted">
-          Upload your bank statement and get instant financial insights powered by AI
-        </p>
-      </div>
-
-      <FileUploadButton 
-        onFileUpload={handleFileUpload}
-        disabled={isProcessing}
-      />
-
-      <div className="grid grid-cols-3 gap-sm text-center">
-        <div className="space-y-2">
-          <div className="w-8 h-8 bg-accent/10 rounded-full flex items-center justify-center mx-auto">
-            <Upload className="h-4 w-4 text-accent" />
-          </div>
-          <p className="text-xs text-muted">Upload</p>
-        </div>
-        <div className="space-y-2">
-          <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
-            <BarChart3 className="h-4 w-4 text-primary" />
-          </div>
-          <p className="text-xs text-muted">Analyze</p>
-        </div>
-        <div className="space-y-2">
-          <div className="w-8 h-8 bg-accent/10 rounded-full flex items-center justify-center mx-auto">
-            <TrendingUp className="h-4 w-4 text-accent" />
-          </div>
-          <p className="text-xs text-muted">Insights</p>
-        </div>
-      </div>
-    </motion.div>
-  );
-
-  const renderProcessingView = () => (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.9 }}
-      className="text-center space-y-lg py-xl"
-    >
-      <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
-        <LoadingSpinner />
-      </div>
-      <div>
-        <h2 className="text-display mb-sm">Processing Statement</h2>
-        <p className="text-muted">
-          Our AI is extracting and categorizing your transactions...
-        </p>
-      </div>
-      <div className="space-y-2 text-left">
-        <div className="flex items-center space-x-2">
-          <div className="w-2 h-2 bg-accent rounded-full animate-pulse" />
-          <span className="text-sm text-muted">Extracting transaction data</span>
-        </div>
-        <div className="flex items-center space-x-2">
-          <div className="w-2 h-2 bg-primary rounded-full animate-pulse" style={{ animationDelay: '0.5s' }} />
-          <span className="text-sm text-muted">Categorizing expenses</span>
-        </div>
-        <div className="flex items-center space-x-2">
-          <div className="w-2 h-2 bg-accent rounded-full animate-pulse" style={{ animationDelay: '1s' }} />
-          <span className="text-sm text-muted">Generating insights</span>
-        </div>
-      </div>
-    </motion.div>
-  );
-
-  const renderInsightsView = () => (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      className="space-y-lg"
-    >
-      {/* Summary Stats */}
-      <div className="grid grid-cols-2 gap-sm">
-        <div className="card text-center">
-          <div className="w-8 h-8 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-2">
-            <TrendingUp className="h-4 w-4 text-red-500" />
-          </div>
-          <p className="text-muted text-xs">Total Spent</p>
-          <p className="text-heading">$1,215.01</p>
-        </div>
-        <div className="card text-center">
-          <div className="w-8 h-8 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-2">
-            <CreditCard className="h-4 w-4 text-accent" />
-          </div>
-          <p className="text-muted text-xs">Transactions</p>
-          <p className="text-heading">{transactions.length}</p>
-        </div>
-      </div>
-
-      {/* Chart Toggle */}
-      <div className="flex items-center justify-between">
-        <h3 className="text-heading">Spending Breakdown</h3>
-        <div className="flex items-center space-x-2">
-          <button
-            onClick={() => setChartType('pieChart')}
-            className={`p-2 rounded-md transition-colors ${chartType === 'pieChart' ? 'bg-primary text-white' : 'text-muted hover:text-text'}`}
-          >
-            <PieChart className="h-4 w-4" />
-          </button>
-          <button
-            onClick={() => setChartType('barChart')}
-            className={`p-2 rounded-md transition-colors ${chartType === 'barChart' ? 'bg-primary text-white' : 'text-muted hover:text-text'}`}
-          >
-            <BarChart3 className="h-4 w-4" />
-          </button>
-        </div>
-      </div>
-
-      {/* Chart */}
-      <div className="card">
-        <ChartDisplay data={spendingData} variant={chartType} />
-      </div>
-
-      {/* Insights */}
-      <div>
-        <h3 className="text-heading mb-sm">Financial Insights</h3>
-        <div className="space-y-sm">
-          {insights.map((insight, index) => (
-            <InsightCard key={index} insight={insight} />
-          ))}
-        </div>
-      </div>
-
-      {/* Recent Transactions */}
-      <div>
-        <h3 className="text-heading mb-sm">Recent Transactions</h3>
-        <div className="card">
-          <div className="space-y-0">
-            {transactions.slice(0, 5).map((transaction) => (
-              <TransactionListItem
-                key={transaction.transactionId}
-                transaction={transaction}
-                variant="withCategoryTag"
-              />
-            ))}
-          </div>
-        </div>
-      </div>
-    </motion.div>
-  );
+      + Save Frame
+    </button>
+  ) : null;
 
   return (
-    <MiniAppFrame>
-      <AnimatePresence mode="wait">
-        {currentView === 'upload' && renderUploadView()}
-        {currentView === 'processing' && renderProcessingView()}
-        {currentView === 'insights' && renderInsightsView()}
-      </AnimatePresence>
-    </MiniAppFrame>
+    <div className="flex flex-col min-h-screen bg-bg">
+      <div className="w-full max-w-md mx-auto px-4 py-3">
+        <header className="flex justify-between items-center mb-6 h-11">
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 bg-primary rounded-md flex items-center justify-center">
+              <span className="text-white font-bold text-sm">SS</span>
+            </div>
+            <div>
+              <h1 className="heading text-primary">StatementSage</h1>
+            </div>
+          </div>
+          
+          <div className="flex items-center space-x-2">
+            <Wallet className="z-10">
+              <ConnectWallet className="text-sm">
+                <Name className="text-inherit" />
+              </ConnectWallet>
+              <WalletDropdown>
+                <Identity className="px-4 pt-3 pb-2" hasCopyAddressOnClick>
+                  <Avatar />
+                  <Name />
+                  <Address />
+                </Identity>
+                <WalletDropdownDisconnect />
+              </WalletDropdown>
+            </Wallet>
+            {saveFrameButton}
+          </div>
+        </header>
+
+        {/* Tab Navigation */}
+        <nav className="flex space-x-1 mb-6 bg-surface rounded-lg p-1">
+          {[
+            { id: "upload", label: "Upload" },
+            { id: "insights", label: "Insights" },
+            { id: "subscription", label: "Pro" }
+          ].map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id as TabType)}
+              className={`flex-1 py-2 px-3 text-sm font-medium rounded-md transition-colors ${
+                activeTab === tab.id
+                  ? "bg-primary text-white"
+                  : "text-text hover:bg-gray-100"
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </nav>
+
+        <main className="flex-1 space-y-6">
+          {activeTab === "upload" && (
+            <div className="space-y-6 animate-fade-in">
+              <div className="card">
+                <h2 className="heading mb-4">Upload Bank Statement</h2>
+                <p className="body text-gray-600 mb-4">
+                  Upload your bank statement (PDF or image) to get started with smart financial insights.
+                </p>
+                <FileUploadButton 
+                  onFileUpload={handleFileUpload}
+                  isProcessing={isProcessing}
+                />
+              </div>
+              
+              {isProcessing && (
+                <div className="card animate-slide-up">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                    <div>
+                      <h3 className="heading">Processing Statement</h3>
+                      <p className="body text-gray-600">AI is analyzing your data...</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {transactions.length > 0 && (
+                <div className="card animate-slide-up">
+                  <h3 className="heading mb-4">Recent Transactions</h3>
+                  <TransactionList transactions={transactions.slice(0, 3)} />
+                  <button
+                    onClick={() => setActiveTab("insights")}
+                    className="btn-primary w-full mt-4"
+                  >
+                    View All Insights
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
+          {activeTab === "insights" && (
+            <div className="space-y-6 animate-fade-in">
+              {transactions.length === 0 ? (
+                <div className="card text-center">
+                  <h2 className="heading mb-2">No Data Yet</h2>
+                  <p className="body text-gray-600 mb-4">
+                    Upload a bank statement to see your financial insights.
+                  </p>
+                  <button
+                    onClick={() => setActiveTab("upload")}
+                    className="btn-primary"
+                  >
+                    Upload Statement
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <ChartDisplay transactions={transactions} />
+                  
+                  <div className="card">
+                    <h3 className="heading mb-4">All Transactions</h3>
+                    <TransactionList transactions={transactions} />
+                  </div>
+                  
+                  <InsightCard 
+                    title="Spending Insight"
+                    content="You spent 23% more on dining out this month compared to last month. Consider meal prepping to save money."
+                    type="recommendation"
+                  />
+                  
+                  {!isProUser && (
+                    <div className="card border-2 border-accent">
+                      <h3 className="heading text-accent mb-2">Unlock More Insights</h3>
+                      <p className="body text-gray-600 mb-4">
+                        Get personalized recommendations and unlimited uploads with Pro.
+                      </p>
+                      <button
+                        onClick={() => setActiveTab("subscription")}
+                        className="btn-accent"
+                      >
+                        Upgrade to Pro
+                      </button>
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+          )}
+
+          {activeTab === "subscription" && (
+            <div className="space-y-6 animate-fade-in">
+              <SubscriptionCard 
+                isProUser={isProUser}
+                onUpgrade={handleSubscriptionUpgrade}
+              />
+            </div>
+          )}
+        </main>
+
+        <footer className="mt-6 pt-4 text-center">
+          <button
+            onClick={() => openUrl("https://base.org/builders/minikit")}
+            className="text-gray-500 text-xs hover:text-gray-700 transition-colors"
+          >
+            Built on Base with MiniKit
+          </button>
+        </footer>
+      </div>
+    </div>
   );
 }

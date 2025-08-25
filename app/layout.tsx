@@ -15,15 +15,15 @@ export const metadata: Metadata = {
   other: {
     "fc:frame": JSON.stringify({
       version: "next",
-      imageUrl: "/hero-image.png",
+      imageUrl: "/og-image.png",
       button: {
         title: "Launch StatementSage",
         action: {
           type: "launch_frame",
           name: "StatementSage",
           url: process.env.NEXT_PUBLIC_URL || "http://localhost:3000",
-          splashImageUrl: "/splash.png",
-          splashBackgroundColor: "#f8fafc",
+          splashImageUrl: "/splash-image.png",
+          splashBackgroundColor: "#f8f9fa",
         },
       },
     }),
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
   return (
     <html lang="en">

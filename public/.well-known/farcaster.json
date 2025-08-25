@@ -10,14 +10,14 @@
     "subtitle": "Built with Zara",
     "description": "StatementSage is a Base Mini App built with Zara.",
     "iconUrl": "https://0co.to/images/zara-2.png",
-    "homeUrl": "https://cdbb00f8-ef99-436a-8979-6ecd8358e31d.vistara.dev",
-    "splashImageUrl": "https://dummyimage.com/200x200/0a0b0d/ffffff.png&text=Splash",
+    "homeUrl": "https://cdbb00f8ef99436a89796ecd8358e31d-mhbe-c2clzaj6t-vistara.vercel.app",
+    "splashImageUrl": "https://cdbb00f8ef99436a89796ecd8358e31d-mhbe-c2clzaj6t-vistara.vercel.app/splash.png",
     "splashBackgroundColor": "#000000",
-    "heroImageUrl": "https://dummyimage.com/1200x628/0a0b0d/ffffff.png&text=Hero",
+    "heroImageUrl": "https://cdbb00f8ef99436a89796ecd8358e31d-mhbe-c2clzaj6t-vistara.vercel.app/image.png",
     "tagline": "StatementSage",
     "screenshotUrls": [
-      "https://dummyimage.com/1200x628/0a0b0d/ffffff.png&text=Shot1",
-      "https://dummyimage.com/1200x628/0a0b0d/ffffff.png&text=Shot2"
+      "https://cdbb00f8ef99436a89796ecd8358e31d-mhbe-c2clzaj6t-vistara.vercel.app/screenshot.png",
+      "https://cdbb00f8ef99436a89796ecd8358e31d-mhbe-c2clzaj6t-vistara.vercel.app/screenshot.png"
     ],
     "primaryCategory": "social",
     "tags": [
@@ -25,6 +25,6 @@
       "miniapp",
       "onchainkit"
     ],
-    "webhookUrl": "https://cdbb00f8-ef99-436a-8979-6ecd8358e31d.vistara.dev/api/webhook"
+    "webhookUrl": "https://cdbb00f8ef99436a89796ecd8358e31d-mhbe-c2clzaj6t-vistara.vercel.app/api/webhook"
   }
 }
